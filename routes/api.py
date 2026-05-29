@@ -1,0 +1,72 @@
+from flask import Blueprint, jsonify, session, request, url_for, redirect
+import utils.task_helpers as helpers
+import utils.auth_helpers as auth
+
+api_bp = Blueprint('api', __name__)
+
+@api_bp.route("/fetch_tasks", methods=["GET"])
+def dashboard():
+    current_user = session.get("current_user")     
+    user_id = helpers.get_user_id(current_user)
+
+    tasks = helpers.fetch_tasks(user_id)
+    return jsonify(tasks)
+
+
+@api_bp.route("/add_tasks", methods=["POST"])
+def add_task():
+    task = request.get_json()
+    current_user = session.get("current_user")
+    user_id = helpers.get_user_id(current_user)
+    task_name = task["task_name"]
+    end_date = task["end_date"]
+
+    helpers.add_task(user_id, task_name, end_date)
+    print("task added")
+    return jsonify({"success":True})
+
+
+@api_bp.route("/delete_tasks", methods=["POST"])
+def delete_task():
+    data = request.get_json()
+    current_user = session.get("current_user")
+    user_id = helpers.get_user_id(current_user)
+    task_id =  data["task_id"]
+    
+    helpers.delete_task(user_id, task_id)
+    print("Task deleted")
+    return jsonify({"success":True})
+
+
+@api_bp.route("/edit_task", methods=["POST"])
+def edit_task():
+    data = request.get_json()
+    current_user = session.get("current_user")
+    user_id = helpers.get_user_id(current_user)
+    task_id = data["task_id"]
+    new_task = data["new_task"]
+
+    helpers.edit_task(new_task, user_id, task_id)
+    print("task edited")
+    return jsonify({"success": True})
+
+
+@api_bp.route("/task_done", methods=["POST"])
+def mark_done():
+    data = request.get_json()
+    current_user = session.get("current_user")
+    user_id = helpers.get_user_id(current_user)
+    task_id = data["task_id"]
+
+    helpers.mark_task_done(user_id, task_id)
+    print("task marked as done")
+    return jsonify({"success": True})
+
+@api_bp.route("/delete_account", methods=["POST"])
+def delete_account():
+    email = session.get("current_user")
+    auth.delete_account(email)
+
+    session.clear()
+    print("account deleted")
+    return redirect(url_for("auth.landing_page"))

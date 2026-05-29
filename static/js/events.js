@@ -1,0 +1,87 @@
+import { render_filtered_dashboard, render_dashboard} from "./render.js";
+import {showMsg, check_date, get_filtered_tasks } from "./ui-core.js";
+import {fetch_tasks, delete_account, add_task } from "./api.js";
+import { getHashInfo, newHashSearch } from "./ui.js";
+
+
+export async function setupSearch() {
+    const search_bar = document.getElementById("search_bar");
+
+    search_bar.addEventListener("input", () => {
+
+        const query = search_bar.value;
+
+        if (query) {
+
+            newHashSearch(query);
+
+        } else {
+
+            const info = getHashInfo();
+
+            window.location.hash =
+                `section=${info.section}&page=${info.page}&mode=dashboard&query=`;
+        }
+    });
+}
+
+export async function setupAddTaskForm() {
+    const submit_btn = document.getElementById("submit_btn");
+
+    submit_btn.addEventListener("click", async () => {
+
+        const task_name = document.getElementById("name").value.trim();
+        const end_date = document.getElementById("end-date").value.trim();
+
+        const task_element = document.getElementById("name");
+        const end_date_element = document.getElementById("end-date");
+
+
+
+        const errors = [];
+
+        if (!task_name || !end_date) {
+            errors.push("Please fill in all inputs.");
+        }
+
+        if (check_date(end_date)) {
+            errors.push("Please put in valid date");
+        }
+
+        if (errors.length > 0) {
+            showMsg(errors, "red");
+        } else {
+            await add_task(task_name, end_date);
+            task_element.value = "";
+            end_date_element.value = "";
+            showMsg("task added", "green");
+        }
+    });
+}
+
+export async function setupDeleteAccount() {
+    const delete_account_btn = document.getElementById("delete_account_btn");
+
+    delete_account_btn.addEventListener("click", async () => {
+        await delete_account();
+    });
+}
+
+export async function hashchange() {
+    window.addEventListener("hashchange", async () => {
+        let { mode, query, page, section } = getHashInfo();
+
+        const page_num = Number(page);
+        const query_value = query.toLowerCase();
+
+        if (mode === "search") {
+            const filtered = await get_filtered_tasks();
+
+            await render_filtered_dashboard(filtered, page_num);
+
+        } else {
+            await render_dashboard(page_num);
+        }
+    });
+}
+

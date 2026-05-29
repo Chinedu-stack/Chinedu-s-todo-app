@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Chinedu's Todo App</title>
+</head>
+<body>
+
+    <div class="container">
+        <nav>
+            <button  id="dashboard_btn"   >Dashboard</button>
+            <button  id="add_task_btn"    >Add Task</button>
+            <button id="delete_account_btn">Delete Account</button>
+            <button onclick="window.location.href='/'">Logout</button>
+        </nav>
+        <ul id="msg_list" class="active_msg"></ul>
+
+        <div class="section" id="dashboard">
+            <div class="content">
+                <h1 class="title" >Dashboard</h1>
+                <label for="search_bar" class="sub_title">Search:</label>
+                <input  class="search_input"   type="text"  id="search_bar" placeholder="Search Tasks...">
+                <h3 class="sub_title">Tasks:</h3>
+                <ol class="tasks" id="task_list"></ol>
+            </div>
+        </div>
+
+
+        <div class="section" id="add_task">
+            <div class="content">
+                <h1 class="title">Add Task</h1>
+                <label for="name" class="sub_title">Task Name:</label>
+                <input name="name" id="name" type="text" placeholder="Add Task...">
+
+                <label for="end-date" class="sub_title">End Date:</label>
+                <input name="end-date" id="end-date" type="date" required>
+
+                <button id="submit_btn" class="create_task_btn" >Create New Task</button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+<script  type="module" src="static/js/main.js"></script>
+</html>
